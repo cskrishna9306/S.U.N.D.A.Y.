@@ -1,0 +1,10 @@
+[project]
+name = "S.U.N.D.A.Y"
+version = "0.1.0"
+description = "Sentry Unit for Night and Day All Year"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.uv]
+package = false
