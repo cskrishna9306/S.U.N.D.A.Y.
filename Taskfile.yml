@@ -1,0 +1,105 @@
+version: '3'
+
+vars:
+  SERVICE: cam-server
+  PROJECT_DIR: /home/saaiii/code/S.U.N.D.A.Y.
+  STREAM_PORT: 8080
+  TAILSCALE_IP: 100.72.53.41
+
+tasks:
+
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list-all
+
+  install:
+    desc: Install the systemd service (run once)
+    cmds:
+      - |
+        sudo tee /etc/systemd/system/{{.SERVICE}}.service << 'EOF'
+        [Unit]
+        Description=Multi-client MJPEG camera server
+        After=network.target
+
+        [Service]
+        WorkingDirectory={{.PROJECT_DIR}}
+        ExecStart={{.PROJECT_DIR}}/.venv/bin/python3 -m src.main
+        Restart=always
+        RestartSec=2
+        User=root
+
+        [Install]
+        WantedBy=multi-user.target
+        EOF
+      - sudo systemctl daemon-reload
+      - sudo systemctl enable {{.SERVICE}}
+      - echo "Installed. Run 'task start' to launch it."
+
+  start:
+    desc: Start the camera server
+    cmds:
+      - sudo systemctl start {{.SERVICE}}
+      - task: status
+
+  stop:
+    desc: Stop the camera server
+    cmds:
+      - sudo systemctl stop {{.SERVICE}}
+      - task: kill-ffmpeg
+
+  restart:
+    desc: Restart the camera server
+    cmds:
+      - sudo systemctl restart {{.SERVICE}}
+      - task: status
+
+  status:
+    desc: Show camera server status
+    cmds:
+      - sudo systemctl status {{.SERVICE}} --no-pager
+
+  logs:
+    desc: Tail the camera server logs live
+    cmds:
+      - sudo journalctl -u {{.SERVICE}} -f
+
+  enable:
+    desc: Enable camera server to start on boot
+    cmds:
+      - sudo systemctl enable {{.SERVICE}}
+
+  disable:
+    desc: Disable camera server from starting on boot
+    cmds:
+      - sudo systemctl disable {{.SERVICE}}
+
+  kill-ffmpeg:
+    desc: Force-kill any stray ffmpeg processes (use if camera LED stays on unexpectedly)
+    cmds:
+      - sudo pkill -9 ffmpeg || true
+
+  camera-check:
+    desc: Check if the camera device is present and show supported formats
+    cmds:
+      - ls /dev/video* || echo "No camera device found"
+      - v4l2-ctl -d /dev/video0 --list-formats-ext || true
+
+  test-stream:
+    desc: Grab 3 seconds of the stream and confirm it's producing real data
+    cmds:
+      - curl -s "http://localhost:{{.STREAM_PORT}}/stream.mjpg" --max-time 3 -o /tmp/test.mjpeg || true
+      - ls -lh /tmp/test.mjpeg
+      - file /tmp/test.mjpeg
+
+  url:
+    desc: Print the stream URL to open in a browser
+    cmds:
+      - echo "http://{{.TAILSCALE_IP}}:{{.STREAM_PORT}}/stream.mjpg"
+
+  firewall:
+    desc: Ensure ufw allows the stream port over tailscale0
+    cmds:
+      - sudo ufw allow in on tailscale0 to any port {{.STREAM_PORT}} proto tcp
+      - sudo ufw reload
+      - sudo ufw status | grep {{.STREAM_PORT}}
