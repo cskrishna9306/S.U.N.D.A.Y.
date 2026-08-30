@@ -4,7 +4,11 @@ version = "0.1.0"
 description = "Sentry Unit for Night and Day All Year"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "boto3>=1.43.83",
+    "opencv-python-headless>=5.0.0.93",
+    "python-dotenv>=1.2.3",
+]
 
 [tool.uv]
 package = false
