@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>S.U.N.D.A.Y.</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  .viewport {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #stream {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: opacity 0.3s ease;
+  }
+
+  #stream.reconnecting {
+    opacity: 0.15;
+  }
+
+  .overlay-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 18px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.65), transparent);
+    color: #eee;
+    font-size: 14px;
+    letter-spacing: 0.03em;
+    pointer-events: none;
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .status-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #e53935;
+    box-shadow: 0 0 6px #e53935;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+
+  .status.live .status-dot {
+    background: #43a047;
+    box-shadow: 0 0 6px #43a047;
+  }
+
+  .reconnect-msg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #eee;
+    font-size: 16px;
+    background: rgba(0,0,0,0.6);
+    padding: 10px 18px;
+    border-radius: 6px;
+    display: none;
+  }
+
+  .reconnect-msg.visible {
+    display: block;
+  }
+</style>
+</head>
+<body>
+  <div class="viewport">
+    <img id="stream" alt="camera stream">
+    <div class="overlay-bar">
+      <span>S.U.N.D.A.Y.</span>
+      <span class="status" id="status">
+        <span class="status-dot"></span>
+        <span id="status-text">connecting</span>
+      </span>
+      <span id="clock"></span>
+    </div>
+    <div class="reconnect-msg" id="reconnect-msg">Reconnecting&hellip;</div>
+  </div>
+
+<script>
+  // Edit this to match your server's address.
+  const STREAM_URL = "http://100.72.53.41:8080/stream.mjpg";
+  const RECONNECT_DELAY_MS = 2000;
+
+  const img = document.getElementById("stream");
+  const status = document.getElementById("status");
+  const statusText = document.getElementById("status-text");
+  const reconnectMsg = document.getElementById("reconnect-msg");
+  const clock = document.getElementById("clock");
+
+  function setLive() {
+    status.classList.add("live");
+    statusText.textContent = "live";
+    img.classList.remove("reconnecting");
+    reconnectMsg.classList.remove("visible");
+  }
+
+  function setReconnecting() {
+    status.classList.remove("live");
+    statusText.textContent = "reconnecting";
+    img.classList.add("reconnecting");
+    reconnectMsg.classList.add("visible");
+    setTimeout(connect, RECONNECT_DELAY_MS);
+  }
+
+  function connect() {
+    // Cache-bust so the browser opens a fresh connection instead of
+    // reusing a stalled one.
+    img.src = STREAM_URL + "?t=" + Date.now();
+  }
+
+  img.addEventListener("load", setLive);
+  img.addEventListener("error", setReconnecting);
+
+  connect();
+
+  setInterval(() => {
+    clock.textContent = new Date().toLocaleTimeString();
+  }, 1000);
+</script>
+</body>
+</html>
