@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>WFWorkflowActionIdentifier</key>
+		<string>is.workflow.actions.comment</string>
+		<key>WFWorkflowActionParameters</key>
+		<dict>
+			<key>WFCommentActionText</key>
+			<string>Step 1: Connect to my Tailscale network</string>
+		</dict>
+	</dict>
+	<dict>
+		<key>WFWorkflowActionIdentifier</key>
+		<string>io.tailscale.ipn.macsys.ConnectIntent</string>
+		<key>WFWorkflowActionParameters</key>
+		<dict>
+			<key>AppIntentDescriptor</key>
+			<dict>
+				<key>AppIntentIdentifier</key>
+				<string>ConnectIntent</string>
+				<key>BundleIdentifier</key>
+				<string>io.tailscale.ipn.macsys</string>
+				<key>Name</key>
+				<string>Tailscale</string>
+				<key>TeamIdentifier</key>
+				<string>W5364U7YZB</string>
+			</dict>
+			<key>ShowWhenRun</key>
+			<false/>
+			<key>UUID</key>
+			<string>7B7F1D21-2F2D-4C80-9025-2883FA47EB33</string>
+		</dict>
+	</dict>
+	<dict>
+		<key>WFWorkflowActionIdentifier</key>
+		<string>is.workflow.actions.comment</string>
+		<key>WFWorkflowActionParameters</key>
+		<dict>
+			<key>WFCommentActionText</key>
+			<string>Step 2: Open a secure shell to my server, and kill S.U.N.D.A.Y.</string>
+		</dict>
+	</dict>
+	<dict>
+		<key>WFWorkflowActionIdentifier</key>
+		<string>is.workflow.actions.runsshscript</string>
+		<key>WFWorkflowActionParameters</key>
+		<dict>
+			<key>UUID</key>
+			<string>B0093E2F-69DD-4606-804A-4F6102CF7AFA</string>
+			<key>WFSSHHost</key>
+			<string>&lt;YOUR-SERVER-IP-ADDRESS&gt;</string>
+			<key>WFSSHPassword</key>
+			<string>&lt;YOUR-SSH-PASSWORD&gt;</string>
+			<key>WFSSHScript</key>
+			<string>cd &lt;PATH_TO_PROJECT_REPO&gt;
+task stop</string>
+			<key>WFSSHUser</key>
+			<string>&lt;YOUR-SSH-USERNAME&gt;</string>
+		</dict>
+	</dict>
+	<dict>
+		<key>WFWorkflowActionIdentifier</key>
+		<string>is.workflow.actions.comment</string>
+		<key>WFWorkflowActionParameters</key>
+		<dict>
+			<key>WFCommentActionText</key>
+			<string>Step 3: Disconnect from Tailscale</string>
+		</dict>
+	</dict>
+	<dict>
+		<key>WFWorkflowActionIdentifier</key>
+		<string>io.tailscale.ipn.macsys.DisconnectIntent</string>
+		<key>WFWorkflowActionParameters</key>
+		<dict>
+			<key>AppIntentDescriptor</key>
+			<dict>
+				<key>AppIntentIdentifier</key>
+				<string>DisconnectIntent</string>
+				<key>BundleIdentifier</key>
+				<string>io.tailscale.ipn.macsys</string>
+				<key>Name</key>
+				<string>Tailscale</string>
+				<key>TeamIdentifier</key>
+				<string>W5364U7YZB</string>
+			</dict>
+			<key>ShowWhenRun</key>
+			<false/>
+			<key>UUID</key>
+			<string>B42984E5-61D2-447E-AAA4-E8DFC766865C</string>
+		</dict>
+	</dict>
+</array>
+</plist>
