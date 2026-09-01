@@ -7,6 +7,17 @@ The project is intended to serve as a surveillance system for my room. It automa
 
 Utilizes a `Logitech` camera connected to my 24x7 running server, but can easily be reconfigured to work with any external camera provided the correct device drivers are installed for it.
 
+## Workflow
+
+1. **On exit:** Disconnect from my home Wi-Fi network → Launch `S.U.N.D.A.Y.`
+2. **On entry:** Connect to my home Wi-Fi network → Stop `S.U.N.D.A.Y.`
+
+Handled via a Wi-Fi-triggered [Shortcuts automation](shortcuts/README.md) on my phone, which runs the start/stop shortcuts over SSH.
+
+My initial vision was to leverage Alexa's proximity capabilities to detect my arrival and departure from the apartment. However, this introduced numerous hurdles with respect to Alexa joining my Tailscale VPN to talk to my server.
+
+Thanks to Advaith's suggestion *(my 🐐 manager @ Censys)* I set out to explore the Apple Shortcuts route which cleared my initial concerns!
+
 ## Setup
 
 **Prerequisites:**
